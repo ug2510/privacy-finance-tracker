@@ -1,0 +1,28 @@
+# Maven
+target/
+*.class
+
+# SQLite database (contains your private financial data!)
+*.db
+*.db-shm
+*.db-wal
+data/
+
+# IDE
+.idea/
+*.iml
+.vscode/settings.json
+
+# Spring Boot exploded jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Environment / secrets
+.env
+*.env.local
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
