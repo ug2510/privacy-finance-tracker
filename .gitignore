@@ -2,6 +2,11 @@
 target/
 *.class
 
+# Python
+venv/
+__pycache__/
+*.py[cod]
+
 # SQLite database (contains your private financial data!)
 *.db
 *.db-shm

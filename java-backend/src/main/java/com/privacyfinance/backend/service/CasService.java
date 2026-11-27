@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.privacyfinance.backend.model.InvestmentHolding;
 import com.privacyfinance.backend.repository.InvestmentHoldingRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,10 @@ import java.util.*;
  *  4. Returns the full portfolio summary (holdings + total value).
  */
 @Service
-@Slf4j
+
 @RequiredArgsConstructor
 public class CasService {
+    private static final Logger log = LoggerFactory.getLogger(CasService.class);
 
     private final InvestmentHoldingRepository holdingRepo;
     private final ObjectMapper objectMapper;
@@ -138,16 +140,17 @@ public class CasService {
 
         List<InvestmentHolding> result = new ArrayList<>();
         for (JsonNode h : holdingsNode) {
-            result.add(InvestmentHolding.builder()
-                    .isin(h.path("isin").asText())
-                    .schemeName(h.path("scheme_name").asText())
-                    .folioNumber(h.path("folio_number").asText())
-                    .units(new BigDecimal(h.path("units").asText("0")))
-                    .nav(new BigDecimal(h.path("nav").asText("0")))
-                    .currentValue(new BigDecimal(h.path("value").asText("0")))
-                    .assetType(h.path("asset_type").asText("MUTUAL_FUND"))
-                    .lastUpdated(LocalDateTime.now())
-                    .build());
+                        result.add(new InvestmentHolding(
+                null,
+                h.path("isin").asText(),
+                h.path("scheme_name").asText(),
+                h.path("folio_number").asText(),
+                new BigDecimal(h.path("units").asText("0")),
+                new BigDecimal(h.path("nav").asText("0")),
+                new BigDecimal(h.path("value").asText("0")),
+                h.path("asset_type").asText("MUTUAL_FUND"),
+                LocalDateTime.now()
+            ));
         }
         return result;
     }

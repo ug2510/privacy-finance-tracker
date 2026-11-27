@@ -1,6 +1,5 @@
-package com.privacyfinance.backend.backend;
+package com.privacyfinance.backend;
 
-import com.privacyfinance.backend.FinanceTrackerApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
