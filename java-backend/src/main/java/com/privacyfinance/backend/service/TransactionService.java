@@ -3,8 +3,8 @@ package com.privacyfinance.backend.service;
 import com.privacyfinance.backend.dto.TransactionRequest;
 import com.privacyfinance.backend.model.Transaction;
 import com.privacyfinance.backend.repository.TransactionRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,12 +25,17 @@ import java.util.List;
  * </ol>
  */
 @Service
-@Slf4j
-@RequiredArgsConstructor
 public class TransactionService {
+
+    private static final Logger log = LoggerFactory.getLogger(TransactionService.class);
 
     private final TransactionRepository transactionRepository;
     private final ChatClient chatClient;
+
+    public TransactionService(TransactionRepository transactionRepository, ChatClient.Builder chatClientBuilder) {
+        this.transactionRepository = transactionRepository;
+        this.chatClient = chatClientBuilder.build();
+    }
 
     // -------------------------------------------------------------------------
     // CRUD
@@ -69,7 +74,6 @@ public class TransactionService {
      *
      * @return number of transactions categorised in this run
      */
-    @Transactional
     public int categoriseUncategorised() {
         List<Transaction> uncategorised = transactionRepository.findByCategoryIsNull();
         if (uncategorised.isEmpty()) {
@@ -109,7 +113,6 @@ public class TransactionService {
                     .user(prompt)
                     .call()
                     .content();
-            // Trim whitespace/newlines and take only the first line in case of verbose models
             return response == null ? "Other" : response.strip().lines().findFirst().orElse("Other");
         } catch (Exception e) {
             log.warn("AI categorisation failed for merchant='{}': {}", merchant, e.getMessage());
@@ -124,6 +127,7 @@ public class TransactionService {
     public BigDecimal totalSpendForCurrentMonth() {
         LocalDateTime start = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime end   = LocalDateTime.now();
-        return transactionRepository.sumDebitsInPeriod(start, end);
+        BigDecimal total = transactionRepository.sumDebitsInPeriod(start, end);
+        return total != null ? total : BigDecimal.ZERO;
     }
 }

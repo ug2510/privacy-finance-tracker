@@ -1,7 +1,7 @@
 package com.privacyfinance.backend.config;
 
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.googleai.gemini.GoogleAiGeminiChatModel;
+import org.springframework.ai.google.genai.GoogleGenAiChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,7 +23,7 @@ public class AiConfig {
      * Inject this bean wherever you need to call Gemini.
      */
     @Bean
-    public ChatClient chatClient(GoogleAiGeminiChatModel geminiChatModel) {
+    public ChatClient chatClient(GoogleGenAiChatModel geminiChatModel) {
         return ChatClient.builder(geminiChatModel).build();
     }
 }
